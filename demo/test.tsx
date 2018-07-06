@@ -1,0 +1,64 @@
+import * as React from "react"
+import * as ReactDOM from "react-dom"
+import { renderPlayer } from '../src';
+import { makeBulletSourceFromArray } from '../src/bullet-source/array';
+import { Yabee } from '../src/interfaces';
+import defaultRenderer from '../src/renderer/html5';
+
+// function safeJsonParse(str:string){
+//     try{
+//         return JSON.parse(str)
+//     }catch{}
+// }
+
+class App extends React.PureComponent<any>{
+    bumaku:Yabee.BumakuInstance
+    bullets:Yabee.Bullet[]
+    bulletSource:Yabee.BulletSource
+    video:HTMLVideoElement
+    componentDidMount(){
+        const container = document.getElementById('container')
+        this.video = document.getElementById('video') as HTMLVideoElement
+        // this.bullets = safeJsonParse(localStorage.bullets) || []
+        const bulletNumber = 2000
+        this.bullets = new Array(bulletNumber).fill(0).map((_, i) => {
+            return {
+              timeOffset: i * 5 / bulletNumber, // in seconds
+              type: "rtl",
+              text: '666',
+            };
+          }),
+        this.bulletSource = makeBulletSourceFromArray(this.bullets,()=>this.video.currentTime)
+        if(container && this.video && this.bullets)
+            this.bumaku = renderPlayer(this.bulletSource,defaultRenderer(container,this.video,b=>`${b.type}`))
+    }
+    addBullet=()=>{
+        const input:HTMLInputElement = document.getElementById('input') as any
+        if(input && this.bumaku){
+            this.bumaku.state.bulletStream.next({
+                text:input.value,
+                type:"rtl",
+                timeOffset:this.video.currentTime,
+            })
+            localStorage.bullets = JSON.stringify(this.bullets)
+        }
+    }
+    render(){
+        return <>
+            <div id="container" style={{position:"relative"}}>
+                <video id="video" controls muted>
+                    <source src="/sample mp4.mp4" />
+                </video>
+            </div>
+            <input id="input" type="text" onKeyDown={e=>{
+                if(e.key === 'Enter')
+                    this.addBullet()
+            }} />
+            <button onClick={this.addBullet}>add</button>
+            <button onClick={()=>localStorage.bullets=[]}>clear</button>
+            <button onClick={()=>this.video.play()}>play</button>
+        </>
+    }
+}
+
+ReactDOM.render(<App />,document.getElementById('root'))
