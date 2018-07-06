@@ -8,8 +8,8 @@ yarn add yabee
 None
 
 # Use
-CNM, 你不会看[demo](./demo/index.html)吗?
-See [demo](./demo/index.html).
+CNM, 你不会看[demo](./demo/test.tsx)吗?
+See [demo](./demo/test.tsx).
 
 # Requirements
 The default renderer Requires HTML5.
