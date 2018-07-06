@@ -1,9 +1,9 @@
 {
   "name": "yabee",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Yet Another Bullet(danmaku) Engine. Emmmmmm.",
   "main": "src/index.js",
-  "types":"src/index.d.ts",
+  "types": "src/index.d.ts",
   "author": "buhichan",
   "license": "MIT",
   "scripts": {
