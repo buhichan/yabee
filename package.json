@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Yet Another Bullet(danmaku) Engine. Emmmmmm.",
   "main": "src/index.js",
+  "types":"src/index.d.ts",
   "author": "buhichan",
   "license": "MIT",
   "scripts": {

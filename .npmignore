@@ -1,4 +1,4 @@
-demo
 **/*.ts
 !**/*.d.ts
+demo
 tsconfig.json
