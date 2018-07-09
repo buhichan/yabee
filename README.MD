@@ -16,7 +16,7 @@ The default renderer Requires HTML5.
 The default danmaku source is an array.
 Can be easily extended to support more.
 
-# Performance
+# Limitations
 The limit is around 400~500 danmaku per second.
 
 # License

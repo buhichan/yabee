@@ -53,10 +53,15 @@ export function makeBulletSourceFromArray(arr:Yabee.Bullet[],getCurrentTimeOffse
                         }
                     })
                 ]
-                return ()=>{
-                    fn.next && listeners.delete(fn.next)
-                    playing && clearTimeout(playing)
-                    subscriptions.forEach(x=>x())
+                return {
+                    unsubscribe:()=>{
+                        fn.next && listeners.delete(fn.next)
+                        playing && clearTimeout(playing)
+                        subscriptions.forEach(x=>x.unsubscribe())
+                    },
+                    get closed(){
+                        return cursor >= arr.length
+                    }
                 }
             }
         }

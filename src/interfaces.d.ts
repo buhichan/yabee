@@ -16,7 +16,10 @@ export namespace Yabee {
     export type PlacementResult = number
     export type Placement = (newBullet:Bullet,currentBullets:Set<BulletInstance>)=>PlacementResult
     export interface Observable<T> {
-        subscribe(ob:Yabee.Observer<T>):(()=>void)
+        subscribe(ob:Yabee.Observer<T>):{
+            unsubscribe:()=>void,
+            closed:boolean
+        }
     }
     export interface Observer<T> {
         next:(t:T)=>void,
