@@ -1,6 +1,6 @@
 {
   "name": "yabee",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Yet Another Bullet(danmaku) Engine. Emmmmmm.",
   "main": "src/index.js",
   "types": "src/index.d.ts",
