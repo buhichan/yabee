@@ -20,6 +20,8 @@ export declare function makeBlayerState(args: BlayerStateArgs): {
             pause: () => void;
             renderBullet(bullet: Yabee.Bullet, placementResult: number): {
                 remove: () => void;
+                startTime: number;
+                duration: number;
                 subscribe: (ob: Yabee.Observer<void>) => void;
             };
         };

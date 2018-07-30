@@ -3,17 +3,13 @@ import { makeObservable } from '../observable';
 import { VideoObservables } from '../state';
 import { makeBatchAppender } from './utils/batch-appender';
 
-const defaultPlacement = (maxRow:number)=>new Array(maxRow).fill(0).map((_,i)=>{
-    return `.yabee.placement-${i}{
-        top:${100/16*i}%;
-    }`
-}).join("\n")
+const defaultRowStyle = (row:number)=>`top:${100/16*row}%`
 
 interface HTML5RendererOptions {
     containerEl:HTMLElement,
     videoEl:HTMLVideoElement,
     getBulletClassName?:(b:Yabee.Bullet)=>string,
-    placement?:typeof defaultPlacement,
+    rowStyle?:typeof defaultRowStyle,
     maxRows?:number,
     duration?:number,
     fontSize?:number
@@ -24,7 +20,7 @@ export default function html5renderer ( options:HTML5RendererOptions ){
         containerEl,
         videoEl,
         getBulletClassName = ()=>"",
-        placement = defaultPlacement,
+        rowStyle = defaultRowStyle,
         maxRows = 16,
         duration = 5,
     } = options
@@ -57,7 +53,9 @@ export default function html5renderer ( options:HTML5RendererOptions ){
                         -o-animation-play-state:paused; 
                         animation-play-state:paused;
                     }
-                    ${placement(maxRows)}
+                    ${new Array(maxRows).fill(0).map((_,i)=>rowStyle(i)).map((style,i)=>{
+                        return  `.yabee.placement-${i} {${style}}`
+                    }).join("\n")}
                     @keyframes yabee {
                         0%{
                             transform: translateX(${containerWidth}px);

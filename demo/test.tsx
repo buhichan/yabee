@@ -24,7 +24,7 @@ class App extends React.PureComponent<any>{
         this.bullets = new Array(bulletNumber).fill(0).map((_, i) => {
             return {
               timeOffset: i * 5 / bulletNumber, // in seconds
-              type: "rtl",
+              type: "default",
               text: '6'.repeat(Math.random()*1000 % 20 + 1)
             };
           }),
@@ -41,7 +41,7 @@ class App extends React.PureComponent<any>{
         if(input && this.bumaku){
             this.bumaku.state.bulletStream.next({
                 text:input.value,
-                type:"rtl",
+                type:"default",
                 timeOffset:this.video.currentTime,
             })
             localStorage.bullets = JSON.stringify(this.bullets)

@@ -24,7 +24,7 @@ var App = (function (_super) {
             if (input && _this.bumaku) {
                 _this.bumaku.state.bulletStream.next({
                     text: input.value,
-                    type: "rtl",
+                    type: "default",
                     timeOffset: _this.video.currentTime,
                 });
                 localStorage.bullets = JSON.stringify(_this.bullets);
@@ -40,7 +40,7 @@ var App = (function (_super) {
         this.bullets = new Array(bulletNumber).fill(0).map(function (_, i) {
             return {
                 timeOffset: i * 5 / bulletNumber,
-                type: "rtl",
+                type: "default",
                 text: '6'.repeat(Math.random() * 1000 % 20 + 1)
             };
         }),

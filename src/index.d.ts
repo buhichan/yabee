@@ -11,6 +11,8 @@ export declare function renderPlayer(bulletSource: Yabee.BulletSource, renderer:
             pause: () => void;
             renderBullet(bullet: Yabee.Bullet, placementResult: number): {
                 remove: () => void;
+                startTime: number;
+                duration: number;
                 subscribe: (ob: Yabee.Observer<void>) => void;
             };
         };

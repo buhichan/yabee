@@ -7,7 +7,7 @@ export type FirstArgumentOf<Fn> = Fn extends (arg1:infer U, ...args:any[])=>any 
 export namespace Yabee {
     export interface Bullet{
         text:string
-        type:string,
+        type:'default' | string,
         timeOffset:number,
         userData?:any
     }

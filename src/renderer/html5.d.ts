@@ -1,11 +1,11 @@
 import { Yabee } from '../interfaces';
 import { VideoObservables } from '../state';
-declare const defaultPlacement: (maxRow: number) => string;
+declare const defaultRowStyle: (row: number) => string;
 interface HTML5RendererOptions {
     containerEl: HTMLElement;
     videoEl: HTMLVideoElement;
     getBulletClassName?: (b: Yabee.Bullet) => string;
-    placement?: typeof defaultPlacement;
+    rowStyle?: typeof defaultRowStyle;
     maxRows?: number;
     duration?: number;
     fontSize?: number;
