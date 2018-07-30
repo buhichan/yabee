@@ -53,10 +53,15 @@ function makeBulletSourceFromArray(arr, getCurrentTimeOffset) {
                         }
                     })
                 ];
-                return function () {
-                    fn.next && listeners.delete(fn.next);
-                    playing && clearTimeout(playing);
-                    subscriptions.forEach(function (x) { return x(); });
+                return {
+                    unsubscribe: function () {
+                        fn.next && listeners.delete(fn.next);
+                        playing && clearTimeout(playing);
+                        subscriptions.forEach(function (x) { return x.unsubscribe(); });
+                    },
+                    get closed() {
+                        return cursor >= arr.length;
+                    }
                 };
             }
         };

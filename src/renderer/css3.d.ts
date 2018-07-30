@@ -7,8 +7,6 @@ interface HTML5RendererOptions {
     getBulletClassName?: (b: Yabee.Bullet) => string;
     placement?: typeof defaultPlacement;
     maxRows?: number;
-    duration?: number;
-    fontSize?: number;
 }
 export default function html5renderer(options: HTML5RendererOptions): {
     getVideoObservables(): VideoObservables;
@@ -16,8 +14,6 @@ export default function html5renderer(options: HTML5RendererOptions): {
     pause: () => void;
     renderBullet(bullet: Yabee.Bullet, placementResult: number): {
         remove: () => void;
-        startTime: number;
-        duration: number;
         subscribe: (ob: Yabee.Observer<void>) => void;
     };
 };

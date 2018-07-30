@@ -6,6 +6,8 @@ export default (bullet:Yabee.Bullet,bullets:Set<Yabee.BulletInstance>)=>{
     bullets.forEach(x=>{
         if(x.def.type !== bullet.type)
             return
+        if(Date.now() > x.inst.startTime + x.inst.duration * 1000 / 2)
+            return
         buckets[x.placement] += x.def.text.length
     })
     return buckets.indexOf(Math.min(...buckets))

@@ -36,21 +36,26 @@ var App = (function (_super) {
         var _this = this;
         var container = document.getElementById('container');
         this.video = document.getElementById('video');
-        var bulletNumber = 2000;
+        var bulletNumber = 5;
         this.bullets = new Array(bulletNumber).fill(0).map(function (_, i) {
             return {
                 timeOffset: i * 5 / bulletNumber,
                 type: "rtl",
-                text: '666',
+                text: '6'.repeat(Math.random() * 1000 % 20 + 1)
             };
         }),
             this.bulletSource = array_1.makeBulletSourceFromArray(this.bullets, function () { return _this.video.currentTime; });
         if (container && this.video && this.bullets)
-            this.bumaku = src_1.renderPlayer(this.bulletSource, html5_1.default(container, this.video, function (b) { return "" + b.type; }));
+            this.bumaku = src_1.renderPlayer(this.bulletSource, html5_1.default({
+                containerEl: container,
+                videoEl: this.video,
+                getBulletClassName: function (b) { return "" + b.type; }
+            }));
     };
     App.prototype.render = function () {
         var _this = this;
-        return React.createElement(React.Fragment, null,
+        return React.createElement("div", { style: { transform: "translate(200px, 200px)" } },
+            React.createElement("style", null, ".yabee { color: #f00 }"),
             React.createElement("div", { id: "container", style: { position: "relative" } },
                 React.createElement("video", { id: "video", controls: true, muted: true },
                     React.createElement("source", { src: "/sample mp4.mp4" }))),

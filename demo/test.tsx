@@ -20,17 +20,21 @@ class App extends React.PureComponent<any>{
         const container = document.getElementById('container')
         this.video = document.getElementById('video') as HTMLVideoElement
         // this.bullets = safeJsonParse(localStorage.bullets) || []
-        const bulletNumber = 2000
+        const bulletNumber = 5
         this.bullets = new Array(bulletNumber).fill(0).map((_, i) => {
             return {
               timeOffset: i * 5 / bulletNumber, // in seconds
               type: "rtl",
-              text: '666',
+              text: '6'.repeat(Math.random()*1000 % 20 + 1)
             };
           }),
         this.bulletSource = makeBulletSourceFromArray(this.bullets,()=>this.video.currentTime)
         if(container && this.video && this.bullets)
-            this.bumaku = renderPlayer(this.bulletSource,defaultRenderer(container,this.video,b=>`${b.type}`))
+            this.bumaku = renderPlayer(this.bulletSource,defaultRenderer({
+                containerEl:container,
+                videoEl:this.video,
+                getBulletClassName:b=>`${b.type}` 
+            }))
     }
     addBullet=()=>{
         const input:HTMLInputElement = document.getElementById('input') as any
@@ -44,7 +48,10 @@ class App extends React.PureComponent<any>{
         }
     }
     render(){
-        return <>
+        return <div style={{transform:"translate(200px, 200px)"}}>
+            <style>
+                {`.yabee { color: #f00 }`}
+            </style>
             <div id="container" style={{position:"relative"}}>
                 <video id="video" controls muted>
                     <source src="/sample mp4.mp4" />
@@ -57,7 +64,7 @@ class App extends React.PureComponent<any>{
             <button onClick={this.addBullet}>add</button>
             <button onClick={()=>localStorage.bullets=[]}>clear</button>
             <button onClick={()=>this.video.play()}>play</button>
-        </>
+        </div>
     }
 }
 

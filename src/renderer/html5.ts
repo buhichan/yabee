@@ -1,84 +1,126 @@
 import { Yabee } from '../interfaces';
 import { makeObservable } from '../observable';
 import { VideoObservables } from '../state';
+import { makeBatchAppender } from './utils/batch-appender';
 
-function makeBatchAppender(container:HTMLElement){
-    const queue = new Set() as Set<HTMLElement>
-    function scheduleAppend(){
-        if(!queue.size)
-            return
-        const frag = document.createDocumentFragment()
-        queue.forEach(child=>frag.appendChild(child))
-        container.appendChild(frag)
-        queue.clear()
-    }
-    return {
-        append(element:HTMLElement){
-            queue.add(element)
-            requestAnimationFrame(scheduleAppend)
-        }
-    }
+const defaultPlacement = (maxRow:number)=>new Array(maxRow).fill(0).map((_,i)=>{
+    return `.yabee.placement-${i}{
+        top:${100/16*i}%;
+    }`
+}).join("\n")
+
+interface HTML5RendererOptions {
+    containerEl:HTMLElement,
+    videoEl:HTMLVideoElement,
+    getBulletClassName?:(b:Yabee.Bullet)=>string,
+    placement?:typeof defaultPlacement,
+    maxRows?:number,
+    duration?:number,
+    fontSize?:number
 }
 
-export default function html5renderer (container:HTMLElement,video:HTMLVideoElement,getBulletClassName:(b:Yabee.Bullet)=>string){
-    const styles = `
-        .yabee {
-            position:absolute;
-            color:#fff;
-            animation: yabee 5s linear;
-            white-space: nowrap;
+export default function html5renderer ( options:HTML5RendererOptions ){
+    const {
+        containerEl,
+        videoEl,
+        getBulletClassName = ()=>"",
+        placement = defaultPlacement,
+        maxRows = 16,
+        duration = 5,
+    } = options
+    let containerWidth = 0
+    const renderStyle = ()=>{
+        containerWidth = containerEl.getBoundingClientRect().width
+        let style = document.getElementById("yabee-style")
+        const fillStyle = ()=>{
+            if(style)
+                style.innerHTML = `
+                    .yabee {
+                        position:absolute;
+                        color:#fff;
+                        animation: yabee ${duration}s linear;
+                        white-space: nowrap;
+                        text-align: right;
+                        left:0;
+                        overflow: visible;
+                    }
+                    .yabee-text{
+                        animation: yabee-text ${duration}s linear;
+                        position: absolute;
+                        top:0;
+                        left:0;
+                    }
+                    .paused .yabee, 
+                    .paused .yabee-text{
+                        -webkit-animation-play-state:paused;
+                        -moz-animation-play-state:paused;
+                        -o-animation-play-state:paused; 
+                        animation-play-state:paused;
+                    }
+                    ${placement(maxRows)}
+                    @keyframes yabee {
+                        0%{
+                            transform: translateX(${containerWidth}px);
+                        }
+                        100%{
+                            transform: translateX(0px);
+                        }
+                    }
+                    @keyframes yabee-text {
+                        0%{
+                            transform: translateX(0);
+                        }
+                        100%{
+                            transform: translateX(-100%);
+                        }
+                    }
+                `
         }
-        .paused>.yabee{
-            -webkit-animation-play-state:paused;
-            -moz-animation-play-state:paused;
-            -o-animation-play-state:paused; 
-            animation-play-state:paused;
-        }
-        ${
-            new Array(16).fill(0).map((_,i)=>{
-                return `.yabee.placement-${i}{
-                    top:${100/16*i}%;
-                }`
-            }).join("\n")
-        }
-        @keyframes yabee {
-            0%{
-                left: ${window.getComputedStyle(container).width};
-            }
-            100%{
-                left: -200px
-            }
-        }
-    `
-    container.classList.add("paused") // initially paused.
-    const style = document.createElement('style')
-    style.innerHTML = styles
-    document.head.appendChild(style)
-    const batchAppender = makeBatchAppender(container)
+        if(!style){
+            style = document.createElement('style')
+            style.id = `yabee-style`
+            fillStyle()
+            document.head.appendChild(style)
+        }else
+            fillStyle()
+    }
+    renderStyle()
+    window.addEventListener("resize", renderStyle)
+    containerEl.classList.add("paused") // initially paused.
+    const batchAppender = makeBatchAppender(containerEl)
     return {
         getVideoObservables():VideoObservables{
             return {
-                pause:makeObservable<keyof HTMLVideoElementEventMap>(video,'pause'),
-                playing:makeObservable<keyof HTMLVideoElementEventMap>(video, 'playing'),
-                seeked:makeObservable<keyof HTMLVideoElementEventMap>(video, 'seeked'),
-                ended:makeObservable<keyof HTMLVideoElementEventMap>(video, 'ended'),
+                pause:makeObservable<keyof HTMLVideoElementEventMap>(videoEl,'pause'),
+                playing:makeObservable<keyof HTMLVideoElementEventMap>(videoEl, 'playing'),
+                seeked:makeObservable<keyof HTMLVideoElementEventMap>(videoEl, 'seeked'),
+                ended:makeObservable<keyof HTMLVideoElementEventMap>(videoEl, 'ended'),
             }
         },
         play:()=>{
-            container.classList.remove("paused")
+            containerEl.classList.remove("paused")
         },
         pause:()=>{
-            container.classList.add("paused")
+            containerEl.classList.add("paused")
         },
         renderBullet(bullet:Yabee.Bullet,placementResult:Yabee.PlacementResult){
-            const spanEl = document.createElement('span')
-            spanEl.innerText = bullet.text
-            spanEl.className=`yabee ${getBulletClassName(bullet)} placement-${placementResult}`
-            batchAppender.append(spanEl)
+            const outerSpan = document.createElement('span')
+            const innerSpan = document.createElement('span')
+            const innerSpan2 = document.createElement('span')
+            innerSpan.innerText = bullet.text
+            innerSpan.classList.add("yabee-text")
+            innerSpan2.innerText = bullet.text
+            innerSpan2.style.opacity = "0"
+            outerSpan.appendChild(innerSpan2)
+            outerSpan.appendChild(innerSpan)
+            outerSpan.className=`yabee ${getBulletClassName(bullet)} placement-${placementResult}`
+            batchAppender.append(outerSpan)
             return {
-                remove:()=>spanEl.remove(),
+                remove:()=>outerSpan.remove(),
+                startTime:Date.now(),
+                duration,
                 subscribe:(ob:Yabee.Observer<void>)=>{
-                    spanEl.addEventListener('animationend', ()=>{
+                    outerSpan.addEventListener('animationend', ()=>{
                         ob.complete && ob.complete()
                     })
                 },
