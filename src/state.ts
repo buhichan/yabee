@@ -10,11 +10,10 @@ export type VideoObservables = {
 type BlayerStateArgs = {
     bulletSource:Yabee.BulletSource,
     renderer:Yabee.Renderer,
-    placement:Yabee.Placement
 }
 
 export function makeBlayerState(args:BlayerStateArgs){
-    const {renderer,bulletSource,placement} = args
+    const {renderer,bulletSource} = args
     const observables = renderer.getVideoObservables()
     const bulletStream = bulletSource(observables)
     const currentBulletInstances:Set<Yabee.BulletInstance> = new Set()
@@ -30,9 +29,6 @@ export function makeBlayerState(args:BlayerStateArgs){
         },
         get currentBullets(){
             return currentBulletInstances
-        },
-        get placement(){
-            return placement
         }
     }
     return {

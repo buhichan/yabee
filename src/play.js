@@ -1,18 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function play(state) {
-    var observables = state.observables, bulletStream = state.bulletStream, renderer = state.renderer, placement = state.placement;
+    var observables = state.observables, bulletStream = state.bulletStream, renderer = state.renderer;
     var currentBullets = state.currentBullets;
     bulletStream.subscribe({
         next: function (bullets) {
             if (!bullets.length)
                 return;
             var bulletInstance = bullets.map(function (bullet) {
-                var placementResult = placement(bullet, currentBullets);
                 var bulletInstance = {
                     def: bullet,
-                    placement: placementResult,
-                    inst: renderer.renderBullet(bullet, placementResult)
+                    inst: renderer.renderBullet(bullet, currentBullets)
                 };
                 currentBullets.add(bulletInstance);
                 return bulletInstance;

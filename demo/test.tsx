@@ -20,7 +20,7 @@ class App extends React.PureComponent<any>{
         const container = document.getElementById('container')
         this.video = document.getElementById('video') as HTMLVideoElement
         // this.bullets = safeJsonParse(localStorage.bullets) || []
-        const bulletNumber = 5
+        const bulletNumber = 50
         this.bullets = new Array(bulletNumber).fill(0).map((_, i) => {
             return {
               timeOffset: i * 5 / bulletNumber, // in seconds
@@ -33,7 +33,8 @@ class App extends React.PureComponent<any>{
             this.bumaku = renderPlayer(this.bulletSource,defaultRenderer({
                 containerEl:container,
                 videoEl:this.video,
-                getBulletClassName:b=>`${b.type}` 
+                getBulletClassName:b=>`${b.type}` ,
+                maxRows:10
             }))
     }
     addBullet=()=>{

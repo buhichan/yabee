@@ -2,27 +2,28 @@ import { Yabee } from '../interfaces';
 import { makeObservable } from '../observable';
 import { VideoObservables } from '../state';
 import { makeBatchAppender } from './utils/batch-appender';
-
-const defaultRowStyle = (row:number)=>`top:${100/16*row}%`
+import defaultPlacement from "../placement/default"
 
 interface HTML5RendererOptions {
     containerEl:HTMLElement,
     videoEl:HTMLVideoElement,
     getBulletClassName?:(b:Yabee.Bullet)=>string,
-    rowStyle?:typeof defaultRowStyle,
+    rowStyle?:(rowIndex:number)=>string,
     maxRows?:number,
     duration?:number,
+    placementStrategy?:Yabee.PlacementStrategy
     fontSize?:number
 }
 
 export default function html5renderer ( options:HTML5RendererOptions ){
+    const maxRows = options.maxRows || 16
     const {
         containerEl,
         videoEl,
         getBulletClassName = ()=>"",
-        rowStyle = defaultRowStyle,
-        maxRows = 16,
+        rowStyle = (row:number)=>`top:${100/maxRows*row}%`,
         duration = 5,
+        placementStrategy = defaultPlacement,
     } = options
     let containerWidth = 0
     const renderStyle = ()=>{
@@ -101,7 +102,7 @@ export default function html5renderer ( options:HTML5RendererOptions ){
         pause:()=>{
             containerEl.classList.add("paused")
         },
-        renderBullet(bullet:Yabee.Bullet,placementResult:Yabee.PlacementResult){
+        renderBullet(bullet:Yabee.Bullet,currentInstances:Set<Yabee.BulletInstance>){
             const outerSpan = document.createElement('span')
             const innerSpan = document.createElement('span')
             const innerSpan2 = document.createElement('span')
@@ -111,11 +112,13 @@ export default function html5renderer ( options:HTML5RendererOptions ){
             innerSpan2.style.opacity = "0"
             outerSpan.appendChild(innerSpan2)
             outerSpan.appendChild(innerSpan)
+            const placementResult = placementStrategy(bullet,currentInstances,maxRows)
             outerSpan.className=`yabee ${getBulletClassName(bullet)} placement-${placementResult}`
             batchAppender.append(outerSpan)
             return {
                 remove:()=>outerSpan.remove(),
                 startTime:Date.now(),
+                placement:placementResult,
                 duration,
                 subscribe:(ob:Yabee.Observer<void>)=>{
                     outerSpan.addEventListener('animationend', ()=>{

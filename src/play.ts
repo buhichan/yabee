@@ -1,18 +1,16 @@
 import { Yabee } from './interfaces';
 
 export function play(state:Yabee.State){
-    const {observables,bulletStream,renderer,placement} = state
+    const {observables,bulletStream,renderer} = state
     const {currentBullets} = state
     bulletStream.subscribe({
         next(bullets){
             if(!bullets.length)
                 return 
             const bulletInstance = bullets.map((bullet)=>{
-                const placementResult = placement(bullet,currentBullets)
                 const bulletInstance = {
                     def:bullet,
-                    placement:placementResult,
-                    inst:renderer.renderBullet(bullet,placementResult)
+                    inst:renderer.renderBullet(bullet,currentBullets)
                 }
                 currentBullets.add(bulletInstance)
                 return bulletInstance

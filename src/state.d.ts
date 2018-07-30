@@ -8,7 +8,6 @@ export declare type VideoObservables = {
 declare type BlayerStateArgs = {
     bulletSource: Yabee.BulletSource;
     renderer: Yabee.Renderer;
-    placement: Yabee.Placement;
 };
 export declare function makeBlayerState(args: BlayerStateArgs): {
     state: {
@@ -18,15 +17,15 @@ export declare function makeBlayerState(args: BlayerStateArgs): {
             getVideoObservables(): VideoObservables;
             play: () => void;
             pause: () => void;
-            renderBullet(bullet: Yabee.Bullet, placementResult: number): {
+            renderBullet(bullet: Yabee.Bullet, currentInstances: Set<Yabee.BulletInstance>): {
                 remove: () => void;
                 startTime: number;
+                placement: number;
                 duration: number;
                 subscribe: (ob: Yabee.Observer<void>) => void;
             };
         };
         readonly currentBullets: Set<Yabee.BulletInstance>;
-        readonly placement: Yabee.Placement;
     };
     methods: {
         destroy(): void;

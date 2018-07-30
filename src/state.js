@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function makeBlayerState(args) {
-    var renderer = args.renderer, bulletSource = args.bulletSource, placement = args.placement;
+    var renderer = args.renderer, bulletSource = args.bulletSource;
     var observables = renderer.getVideoObservables();
     var bulletStream = bulletSource(observables);
     var currentBulletInstances = new Set();
@@ -17,9 +17,6 @@ function makeBlayerState(args) {
         },
         get currentBullets() {
             return currentBulletInstances;
-        },
-        get placement() {
-            return placement;
         }
     };
     return {

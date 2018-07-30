@@ -2,9 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = require("../observable");
 var batch_appender_1 = require("./utils/batch-appender");
-var defaultRowStyle = function (row) { return "top:" + 100 / 16 * row + "%"; };
+var default_1 = require("../placement/default");
 function html5renderer(options) {
-    var containerEl = options.containerEl, videoEl = options.videoEl, _a = options.getBulletClassName, getBulletClassName = _a === void 0 ? function () { return ""; } : _a, _b = options.rowStyle, rowStyle = _b === void 0 ? defaultRowStyle : _b, _c = options.maxRows, maxRows = _c === void 0 ? 16 : _c, _d = options.duration, duration = _d === void 0 ? 5 : _d;
+    var maxRows = options.maxRows || 16;
+    var containerEl = options.containerEl, videoEl = options.videoEl, _a = options.getBulletClassName, getBulletClassName = _a === void 0 ? function () { return ""; } : _a, _b = options.rowStyle, rowStyle = _b === void 0 ? function (row) { return "top:" + 100 / maxRows * row + "%"; } : _b, _c = options.duration, duration = _c === void 0 ? 5 : _c, _d = options.placementStrategy, placementStrategy = _d === void 0 ? default_1.default : _d;
     var containerWidth = 0;
     var renderStyle = function () {
         containerWidth = containerEl.getBoundingClientRect().width;
@@ -43,7 +44,7 @@ function html5renderer(options) {
         pause: function () {
             containerEl.classList.add("paused");
         },
-        renderBullet: function (bullet, placementResult) {
+        renderBullet: function (bullet, currentInstances) {
             var outerSpan = document.createElement('span');
             var innerSpan = document.createElement('span');
             var innerSpan2 = document.createElement('span');
@@ -53,11 +54,13 @@ function html5renderer(options) {
             innerSpan2.style.opacity = "0";
             outerSpan.appendChild(innerSpan2);
             outerSpan.appendChild(innerSpan);
+            var placementResult = placementStrategy(bullet, currentInstances, maxRows);
             outerSpan.className = "yabee " + getBulletClassName(bullet) + " placement-" + placementResult;
             batchAppender.append(outerSpan);
             return {
                 remove: function () { return outerSpan.remove(); },
                 startTime: Date.now(),
+                placement: placementResult,
                 duration: duration,
                 subscribe: function (ob) {
                     outerSpan.addEventListener('animationend', function () {

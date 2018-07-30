@@ -1,5 +1,6 @@
 import { makeBlayerState, VideoObservables } from "./state";
 import defaultRenderer from "./renderer/html5";
+import defaultPlacement from "./placement/default";
 import { renderPlayer } from ".";
 
 export type FirstArgumentOf<Fn> = Fn extends (arg1:infer U, ...args:any[])=>any ? U : never
@@ -13,8 +14,7 @@ export namespace Yabee {
     }
     export type State = ReturnType<typeof makeBlayerState>['state']
     export type Renderer = ReturnType<typeof defaultRenderer>
-    export type PlacementResult = number
-    export type Placement = (newBullet:Bullet,currentBullets:Set<BulletInstance>)=>PlacementResult
+    export type PlacementStrategy = typeof defaultPlacement 
     export interface Observable<T> {
         subscribe(ob:Yabee.Observer<T>):{
             unsubscribe:()=>void,
@@ -28,7 +28,6 @@ export namespace Yabee {
     }
     export type BulletInstance = {
         def:Bullet,
-        placement:PlacementResult,
         inst:ReturnType<Yabee.Renderer['renderBullet']>
     }
     export type BulletStream = Yabee.Observable<Yabee.Bullet[]>&Yabee.Observer<Yabee.Bullet>

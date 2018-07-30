@@ -36,7 +36,7 @@ var App = (function (_super) {
         var _this = this;
         var container = document.getElementById('container');
         this.video = document.getElementById('video');
-        var bulletNumber = 5;
+        var bulletNumber = 50;
         this.bullets = new Array(bulletNumber).fill(0).map(function (_, i) {
             return {
                 timeOffset: i * 5 / bulletNumber,
@@ -49,7 +49,8 @@ var App = (function (_super) {
             this.bumaku = src_1.renderPlayer(this.bulletSource, html5_1.default({
                 containerEl: container,
                 videoEl: this.video,
-                getBulletClassName: function (b) { return "" + b.type; }
+                getBulletClassName: function (b) { return "" + b.type; },
+                maxRows: 10
             }));
     };
     App.prototype.render = function () {
