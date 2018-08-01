@@ -15,10 +15,6 @@
     "noImplicitThis": true,
     "noUnusedParameters": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
-    // "baseUrl": ".",
-    // "paths": {
-    //   "utils/*": ["utils/*"]
-    // },
+    "strictNullChecks": true
   },
 }

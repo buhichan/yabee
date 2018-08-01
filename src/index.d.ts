@@ -4,9 +4,9 @@ export declare function renderPlayer(bulletSource: Yabee.BulletSource, renderer:
     destroy(): void;
     state: {
         readonly bulletStream: Yabee.BulletStream;
-        readonly observables: import("../../../../../../Users/buhi/Documents/js_projects/yabee/src/state").VideoObservables;
+        readonly observables: import("./state").VideoObservables;
         readonly renderer: {
-            getVideoObservables(): import("../../../../../../Users/buhi/Documents/js_projects/yabee/src/state").VideoObservables;
+            getVideoObservables(): import("./state").VideoObservables;
             play: () => void;
             pause: () => void;
             renderBullet(bullet: Yabee.Bullet, currentInstances: Set<Yabee.BulletInstance>): {

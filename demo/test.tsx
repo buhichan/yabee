@@ -45,7 +45,7 @@ class App extends React.PureComponent<any>{
                 type:"default",
                 timeOffset:this.video.currentTime,
             })
-            localStorage.bullets = JSON.stringify(this.bullets)
+            localStorage.setItem('bullets',JSON.stringify(this.bullets))
         }
     }
     render(){
@@ -63,7 +63,7 @@ class App extends React.PureComponent<any>{
                     this.addBullet()
             }} />
             <button onClick={this.addBullet}>add</button>
-            <button onClick={()=>localStorage.bullets=[]}>clear</button>
+            <button onClick={()=>localStorage.setItem('bullets',"[]")}>clear</button>
             <button onClick={()=>this.video.play()}>play</button>
         </div>
     }

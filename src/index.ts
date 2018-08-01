@@ -15,3 +15,6 @@ export function renderPlayer(
         ...methods
     }
 }
+let a = 1
+
+a = a + 1
